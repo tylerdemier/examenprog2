@@ -31,17 +31,19 @@ public class VentanaGeneral extends JFrame {
 
 	private JMenuItem baseDatos;
 	
+	private JMenuItem ordenarPorCol;
+
 	private static final Logger LOGGER = Logger.getLogger(VentanaGeneral.class.getName());
 
 	public VentanaGeneral(ArrayList<Tabla> tablitas) {
-		
+
 		try {
 			FileHandler fH = new FileHandler("MyLogFile.log", 8096, 1, false);
 			for (Handler handler : LOGGER.getHandlers()) {
 				LOGGER.removeHandler(handler);
-				
+
 			}
-			SimpleFormatter formatter = new SimpleFormatter();  
+			SimpleFormatter formatter = new SimpleFormatter();
 			fH.setFormatter(formatter);
 			LOGGER.addHandler(fH);
 
@@ -49,8 +51,8 @@ public class VentanaGeneral extends JFrame {
 			e.printStackTrace();
 		}
 
-		LOGGER.log(Level.INFO, "Ventana general iniciada");		
-		
+		LOGGER.log(Level.INFO, "Ventana general iniciada");
+
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle("Ventana General");
@@ -144,6 +146,22 @@ public class VentanaGeneral extends JFrame {
 
 			}
 		});
+		
+		ordenarPorCol = new JMenuItem("ORDENAR POR COL NOMBRE");
+		ordenarPorCol.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				for (Tabla tabla2 : tablitas) {
+					tabla2.ordenaTablaString(0);
+					repaint();
+				}
+				
+			}
+		});
+		
+		menuAcciones.add(ordenarPorCol);
 		menuAcciones.add(baseDatos);
 
 		setJMenuBar(menuBar);
