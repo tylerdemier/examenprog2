@@ -125,7 +125,7 @@ public class ProcesoCSVMeet {
 	private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected static void preparaVentana() {
-		ventana = new VentanaGeneral();
+		ventana = new VentanaGeneral(lTablas);
 		ventana.setSize(800, 600);
 		ventana.setEnCierre(new Runnable() {
 			public void run() {

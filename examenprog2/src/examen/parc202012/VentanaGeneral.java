@@ -3,9 +3,14 @@ package examen.parc202012;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalBorders.MenuItemBorder;
 
 @SuppressWarnings("serial")
 public class VentanaGeneral extends JFrame {
@@ -19,7 +24,9 @@ public class VentanaGeneral extends JFrame {
 	private ArrayList<JInternalFrame> misSubventanas;
 	private Runnable runEnCierre;
 
-	public VentanaGeneral() {
+	private JMenuItem baseDatos;
+
+	public VentanaGeneral(ArrayList<Tabla> tablitas) {
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle("Ventana General");
@@ -47,6 +54,74 @@ public class VentanaGeneral extends JFrame {
 		menuAcciones = new JMenu("Acciones");
 		menuAcciones.setMnemonic(KeyEvent.VK_A);
 		menuBar.add(menuAcciones);
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		baseDatos = new JMenuItem("BASEAR");
+		baseDatos.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				int contador = 0;
+
+				for (Tabla tabla : tablitas) {
+
+					contador = contador + 1;
+
+					try {
+						Connection conn;
+						conn = DriverManager.getConnection("jdbc:sqlite:examenprog2db.db");
+						Statement stmt = (Statement) conn.createStatement();
+
+						String instruccionBorrar = "DROP TABLE IF EXISTS TABLA" + contador + ";";
+						stmt.executeUpdate(instruccionBorrar);
+
+						String instruccionCrearTabla = "CREATE TABLE TABLA" + contador
+								+ " (NOMBRE VARCHAR(25), CORREO VARCHAR(50), DURACION VARCHAR(10), HORAU VARCHAR(5), HORAS VARCHAR(5));";
+						stmt.executeUpdate(instruccionCrearTabla);
+
+						// System.out.println(instruccionBorrar);
+						// System.out.println(instruccionCrearTabla);
+
+						stmt.close();
+						conn.close();
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					for (int i = 0; i < tabla.size(); i++) {
+
+						try {
+
+							Connection conn;
+							conn = DriverManager.getConnection("jdbc:sqlite:examenprog2db.db");
+							Statement stmt = (Statement) conn.createStatement();
+
+							String instruccionInsertarTabla = "INSERT INTO TABLA" + contador + " VALUES('"
+									+ tabla.get(i, 0) + "', '" + tabla.get(i, 1) + "', '" + tabla.get(i, 2) + "', '"
+									+ tabla.get(i, 3) + "', '" + tabla.get(i, 4) + "');";
+
+							stmt.executeUpdate(instruccionInsertarTabla);
+
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+
+					}
+				}
+
+			}
+		});
+		menuAcciones.add(baseDatos);
+
 		setJMenuBar(menuBar);
 	}
 
