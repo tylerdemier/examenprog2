@@ -8,6 +8,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalBorders.MenuItemBorder;
@@ -25,8 +30,27 @@ public class VentanaGeneral extends JFrame {
 	private Runnable runEnCierre;
 
 	private JMenuItem baseDatos;
+	
+	private static final Logger LOGGER = Logger.getLogger(VentanaGeneral.class.getName());
 
 	public VentanaGeneral(ArrayList<Tabla> tablitas) {
+		
+		try {
+			FileHandler fH = new FileHandler("MyLogFile.log", 8096, 1, false);
+			for (Handler handler : LOGGER.getHandlers()) {
+				LOGGER.removeHandler(handler);
+				
+			}
+			SimpleFormatter formatter = new SimpleFormatter();  
+			fH.setFormatter(formatter);
+			LOGGER.addHandler(fH);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		LOGGER.log(Level.INFO, "Ventana general iniciada");		
+		
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle("Ventana General");
